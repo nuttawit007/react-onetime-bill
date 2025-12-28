@@ -5,6 +5,7 @@ function MenuModal({sendDataToMenuList, getBasePeople}) {
     const [price, setPrice] = useState("");
     const [people, setPeople] = useState([]);
     const [choosePeople, setChoosePeople] = useState([]);
+    const [selectAllPeople, setSelectAllPeople] = useState(false);
 
     const dialogRef = useRef(null);
     const inputRef = useRef(null);
@@ -25,14 +26,11 @@ function MenuModal({sendDataToMenuList, getBasePeople}) {
         }
     });
 
-    const listChoosePeople = choosePeople.map((p) => {
-        return <span key={p} className="badge badge-primary mr-2">{p}</span>
-    });
-
     const addNewPeople = () => {
         const newPeople = inputRef.current.value.trim();
         if (newPeople && !people.includes(newPeople)) {
             setPeople([...people, newPeople]);
+            setChoosePeople([...choosePeople, newPeople]);
         }
         inputRef.current.value = "";
     }
@@ -44,6 +42,16 @@ function MenuModal({sendDataToMenuList, getBasePeople}) {
             setChoosePeople([...choosePeople.filter(person => person !== p)]);
         }
     };
+
+    const chooseAllPeople = () => {
+        if (selectAllPeople) {
+            setChoosePeople([]);
+            setSelectAllPeople(false);
+        } else {
+            setChoosePeople([...people]);
+            setSelectAllPeople(true);
+        }
+    }
 
     const onSubmit = () => {
         sendDataToMenuList({menuName, price, people, choosePeople});
@@ -62,24 +70,27 @@ function MenuModal({sendDataToMenuList, getBasePeople}) {
                     <p className="py-4">ใส่รายละเอียดรายการ,ราคา,คนกิน</p>
 
                     {/* Menu name input */}
-                    <label htmlFor="menuName">ชื่อรายการ</label>
-                    <input id="menuName" type="text"  maxLength={20} className="border-2 rounded-2xl" value={menuName} onChange={(e) => setMenuName(e.target.value)}/>
-                    <p>{menuName}</p>
+                    <div>
+                        <label htmlFor="menuName">ชื่อรายการ</label>
+                        <input id="menuName" type="text"  maxLength={20} className="border-2 rounded-2xl" value={menuName} onChange={(e) => setMenuName(e.target.value)}/>
+                    </div>
 
                     {/* Price input */}
-                    <label htmlFor="price">ราคา</label>
-                    <input id="price" type="number" className="border-2 rounded-2xl" value={price} onChange={(e) => setPrice(e.target.value)}/>
-                    <p>{price}</p>
+                    <div>
+                        <label htmlFor="price">ราคา</label>
+                        <input id="price" type="number" className="border-2 rounded-2xl" value={price} onChange={(e) => setPrice(e.target.value)}/>
+                    </div>
 
                     {/* People input */}
-                    <label htmlFor="addpeople">เพิ่มคน</label>
-                    <input ref={inputRef} type="text" className="border-2 rounded-2xl" />
-                    <button type="button" className='btn btn-secondary' onClick={addNewPeople}>เพิ่ม</button>
+                    <div>
+                        <label htmlFor="addpeople">เพิ่มคน</label>
+                        <input ref={inputRef} type="text" className="border-2 rounded-2xl" />
+                        <button type="button" className='btn btn-secondary' onClick={addNewPeople}>เพิ่ม</button>
+                    </div>
 
                     {/* List people */}
                     <div>{listPeople}</div>
-
-                    <div>{listChoosePeople}</div>
+                    <button type="button" className='btn btn-secondary mt-2' onClick={chooseAllPeople}>เลือกทุกคน</button>
 
                     {/* Save */}
                     <div className="modal-action">

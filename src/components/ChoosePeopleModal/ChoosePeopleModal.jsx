@@ -4,6 +4,7 @@ import { Pencil } from 'lucide-react';
 function ChoosePeopleModal({sendDataToMenuList, getBasePeople, getChoosePeople}) {
     const [people, setPeople] = useState([]);
     const [choosePeople, setChoosePeople] = useState([]);
+    const [selectAllPeople, setSelectAllPeople] = useState(false);
 
     const dialogRef = useRef(null);
     const inputRef = useRef(null);
@@ -23,6 +24,7 @@ function ChoosePeopleModal({sendDataToMenuList, getBasePeople, getChoosePeople})
         const newPeople = inputRef.current.value.trim();
         if (newPeople && !people.includes(newPeople)) {
             setPeople([...people, newPeople]);
+            setChoosePeople([...choosePeople, newPeople]);
         }
         inputRef.current.value = "";
     }
@@ -43,9 +45,15 @@ function ChoosePeopleModal({sendDataToMenuList, getBasePeople, getChoosePeople})
         }
     };
 
-    const listChoosePeople = choosePeople.map((p) => {
-        return <span key={p} className="badge badge-primary mr-2">{p}</span>
-    });
+    const chooseAllPeople = () => {
+        if (selectAllPeople) {
+            setChoosePeople([]);
+            setSelectAllPeople(false);
+        } else {
+            setChoosePeople([...people]);
+            setSelectAllPeople(true);
+        }
+    }
 
     const onSubmit = () => {
         sendDataToMenuList({people, choosePeople});
@@ -68,8 +76,7 @@ function ChoosePeopleModal({sendDataToMenuList, getBasePeople, getChoosePeople})
             {/* List people */}
             <div>{listPeople}</div>
 
-            {/* List Choose people */}
-            <div>{listChoosePeople}</div>
+            <button type="button" className='btn btn-secondary mt-2' onClick={chooseAllPeople}>เลือกทุกคน</button>
 
             <div className="modal-action">
                 <form method="dialog">
